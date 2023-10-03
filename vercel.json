@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/main.py": {
-      "runtime": "python@3.8"
+      "runtime": "vercel-php@0.5.2"
     }
   },
   "routes": [
