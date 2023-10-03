@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Churn Prediction</title>
+    <style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    text-align: center;
+    color: #007BFF;
+    margin-bottom: 20px;
+}
+
+form {
+    margin-top: 20px;
+}
+
+label {
+    font-weight: bold;
+    color: #333;
+    display: block;
+    margin-bottom: 10px;
+}
+
+select,
+input[type="number"] {
+    width: 100%; /* Set the width to 100% to make all input elements the same width */
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box; /* Include padding and border in the width */
+}
+
+button[type="submit"] {
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    display: block;
+    margin: 20px auto;
+}
+
+.result {
+    background-color: #f0f0f0;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 18px;
+    color: #333;
+}
+
+/* Additional styling for select elements */
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: url('arrow.png') no-repeat right center;
+    background-size: 20px 20px;
+    padding-right: 40px;
+}
+
+/* Media query for responsiveness */
+@media (max-width: 600px) {
+    .container {
+        max-width: 90%;
+    }
+}
+
+    </style>
+
+</head>
+<body>
+    <div class="container">
+        <h1>Churn Prediction</h1>
+        <form action="/predict" method="post" id="ml-form">
+            <label for="credit_score">Credit Score</label>
+            <input type="number" name="credit_score" id="credit_score" min="0" 
+            max="1000" step="0.01"><br>
+
+            <label for="Geography">Geography:</label>
+            <select name="Geography" id="Geography" required>
+                <option value=0>France</option>
+                <option value=1>Germany</option>
+                <option value=2>Spain</option>
+            </select><br>
+
+            <label for="gender">Gender:</label>
+            <select name="gender" id="gender" required>
+                <option value=1>Male</option>
+                <option value=0>Female</option>
+            </select><br>
+
+            <label for="age">Age:</label>
+            <input type="number" name="age" id="age" min="0" max="100" step="1"><br>
+            
+            <label for="tenure">Tenure:</label>
+            <input type="number" name="tenure" id="tenure" min="0"  step="1"><br>
+
+            <label for="balance">Balance</label>
+            <input type="number" name="balance" id="balance" min="0" step="0.01"><br>
+
+            <label for="no_of_products">Number of Products:</label>
+            <input type="number" name="no_of_products" id="no_of_products" min="0" max="1000" step="1"><br>
+
+            <label for="has_credit_card">Has Credit card:</label>
+            <select name="has_credit_card" id="has_credit_card" required>
+                <option value=1>Yes</option>
+                <option value=0>No</option>
+            </select><br>
+
+            <label for="is_active_member">Active Member:</label>
+            <select name="is_active_member" id="is_active_member" required>
+                <option value=1>Yes</option>
+                <option value=0>No</option>
+            </select><br>
+
+            <label for="estimated_salary">Estimated Salary</label>
+            <input type="number" name="estimated_salary" id="estimated_salary" min="0" step="0.01"><br>
+
+            <button type="submit" value="Predict" id="prediction">Predict</button>
+        </form>
+
+        {% if prediction is defined %}
+        <div class="result">
+            <h2>Prediction:</h2>
+            <p>{{ prediction }}</p>
+        </div>
+        {% endif %}
+    </div>
+    <script>
+        document.getElementById('ml-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = {
+                credit_score: document.getElementById('credit_score').value,
+                Geography: document.getElementById('Geography').value,
+                gender: document.getElementById('gender').value,
+                age: document.getElementById('age').value,
+                tenure: document.getElementById('tenure').value,
+                balance: document.getElementById('balance').value,
+                no_of_products: document.getElementById('no_of_products').value,
+                has_credit_card: document.getElementById('has_credit_card').value,
+                is_active_member: document.getElementById('is_active_member').value,
+                estimated_salary: document.getElementById('estimated_salary').value,
+            };
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(formData),
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log('Received Data:', data);
+                const predictionText = data === '1' ? 'The customer is likely to be churn' : 'The customer is  not likely to be churn';
+                const predictionResult = document.getElementById('prediction');
+                document.getElementById('prediction').textContent = 'Prediction: ' + predictionText;
+                predictionResult.style.backgroundColor = data === '1' ? 'red' : 'green';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
