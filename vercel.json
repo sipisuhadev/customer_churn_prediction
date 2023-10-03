@@ -5,7 +5,7 @@
     }
   },
   "routes": [
-    { "src": "/api/(.*)", "dest": "api/main.py" },
+    { "src": "/api/(.*)", "dest": "api/app.py" },
     { "src": "/templates/(.*)", "dest": "templates/$1" }
   ],
   "env": {
