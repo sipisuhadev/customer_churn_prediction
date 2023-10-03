@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/main.py": {
+    "api/app.py": {
       "runtime": "vercel-php@0.5.2"
     }
   },
